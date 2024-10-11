@@ -64,4 +64,44 @@ class User extends Authenticatable
      * @var string
      */
     protected $primaryKey = 'id';
+
+    /**
+     * Append additiona info to the return data
+     *
+     * @var string
+     */
+	public $appends = [
+        'avatar',
+        'fullname',
+        'middleinitial',
+        'details',
+    ];
+
+    public function getDetails()
+    {   
+        return $this->hasMany('App\Models\Detail', 'user_id', 'id');
+    }
+
+    /****************************************
+    *           ATTRIBUTES PARTS            *
+    ****************************************/
+    public function getAvatarAttribute() 
+    {
+        return $this->photo;
+    }
+
+    public function getFullnameAttribute() 
+    {
+        return $this->firstname.' '.$this->middlename.'. '.$this->lastname;
+    }
+
+    public function getMiddleinitialAttribute() 
+    {
+        return $this->middlename;
+    }
+
+    public function getDetailsAttribute() 
+    {
+        return $this->getUserDetails()->pluck('key','value')->toArray();
+    }
 }
