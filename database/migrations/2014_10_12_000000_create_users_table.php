@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('middlename', 255);
             $table->string('lastname', 255);
             $table->string('suffixname', 255);
-            $table->string('username')->unique()->index();
+            $table->string('username')->index();
             $table->string('email')->unique()->index();
             $table->text('password');
             $table->text('photo');

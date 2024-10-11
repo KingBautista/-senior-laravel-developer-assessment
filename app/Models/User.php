@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'middlename',
         'lastname',
         'suffixname',
+        'username',
         'email',
         'password',
         'photo',
@@ -102,6 +104,6 @@ class User extends Authenticatable
 
     public function getDetailsAttribute() 
     {
-        return $this->getUserDetails()->pluck('key','value')->toArray();
+        return $this->getDetails()->pluck('key','value')->toArray();
     }
 }

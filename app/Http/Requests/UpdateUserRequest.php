@@ -25,6 +25,7 @@ class UpdateUserRequest extends FormRequest
 			"username" => "required|string|unique:users,username,".$this->id,
 			"email" => "required|email|unique:users,email,".$this->id,
 			"password" => [
+				'nullable',
 				'string',
 				'min:8',              // must be at least 8 characters in length
 				'regex:/[a-z]/',      // must contain at least one lowercase letter
