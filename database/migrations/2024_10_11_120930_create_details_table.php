@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('details', function (Blueprint $table) {
-            $table->bigIncrements();
+            $table->engine = "InnoDB";
+
+            $table->bigIncrements('id');
             $table->string('key', 255);
             $table->text('value');
             $table->string('icon', 255);
