@@ -1,1 +1,1 @@
-# -senior-laravel-developer-assessment
+# senior-laravel-developer-assessment
