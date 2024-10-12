@@ -7,16 +7,23 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Services\UserService;
 use Hash;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
+        $users = $this->userService->list();
         return view('user.list', compact('users'));
     }
 
@@ -50,7 +57,8 @@ class UserController extends Controller
             "suffixname" => $request->suffixname,
             "photo" => ($path) ? $path : ''
         ];
-        $user = User::create($data);
+
+        $users = $this->userService->store($data);
 
         return redirect()->route('user.create')->with('success', 'User created successfully.');
     }
@@ -60,7 +68,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userService->find($id);
         return view('user.show', compact('user'));
     }
 
@@ -69,7 +77,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userService->find($id);
         return view('user.edit', compact('user'));
     }
 
@@ -99,8 +107,7 @@ class UserController extends Controller
             $data["photo"] = $path;
         }
 
-        $user = User::findOrFail($id);
-        $user->update($data);
+        $this->userService->update($data, $id);
 
         return redirect()->route('user.edit', $id)->with('success', 'Item updated successfully.');
     }
@@ -110,8 +117,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        $user = $this->userService->destroy($id);
         return redirect()->route('users')->with('success', 'Item deleted successfully.');
     }
 
@@ -120,7 +126,7 @@ class UserController extends Controller
      */
     public function trashed()
     {
-        $users = UserResource::collection(User::query()->onlyTrashed()->orderBy('id', 'desc')->paginate(10));
+        $users = $this->userService->trashed();
         return view('user.trashed', compact('users'));
     }
 
@@ -129,9 +135,7 @@ class UserController extends Controller
      */
     public function restore($id)
     {
-        $user = User::withTrashed()->findOrFail($id);
-        $user->restore();
-
+        $this->userService->restore($id);
         return redirect()->route('users.trashed')->with('success', 'User restored successfully!');
     }
 
@@ -140,9 +144,7 @@ class UserController extends Controller
      */
     public function forceDelete($id)
     {
-        $user = User::withTrashed()->findOrFail($id);
-        $user->forceDelete();
-
+        $this->userService->forceDelete($id);
         return redirect()->route('users.trashed')->with('success', 'User permanently deleted!');
     }
 }
