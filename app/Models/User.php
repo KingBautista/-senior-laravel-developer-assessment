@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Events\UserSaved;
 
 class User extends Authenticatable
 {
@@ -105,5 +106,18 @@ class User extends Authenticatable
     public function getDetailsAttribute() 
     {
         return $this->getDetails()->pluck('key','value')->toArray();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($user) {
+            event(new UserSaved($user));
+        });
+
+        static::updated(function ($user) {
+            event(new UserSaved($user));
+        });
     }
 }
