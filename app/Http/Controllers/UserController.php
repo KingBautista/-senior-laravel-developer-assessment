@@ -114,4 +114,35 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users')->with('success', 'Item deleted successfully.');
     }
+
+    /**
+     * Display a listing of the resource with softdeletes.
+     */
+    public function trashed()
+    {
+        $users = UserResource::collection(User::query()->onlyTrashed()->orderBy('id', 'desc')->paginate(10));
+        return view('user.trashed', compact('users'));
+    }
+
+    /**
+     * Restore resource with soft-deleted user.
+     */
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('users.trashed')->with('success', 'User restored successfully!');
+    }
+
+    /**
+     * Permanently delete a soft-deleted user.
+     */
+    public function forceDelete($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->forceDelete();
+
+        return redirect()->route('users.trashed')->with('success', 'User permanently deleted!');
+    }
 }

@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+
+    Route::get('users/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+    Route::patch('user/restore/{id}', [UserController::class, 'restore'])->name('user.restore');
+    Route::delete('user/delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
 });
 
 Route::middleware('auth')->group(function () {

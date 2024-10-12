@@ -1,14 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Users') }} &nbsp; <a href="{{ route('user.create') }}" type="button" class="btn btn-primary btn-sm">Create New User</a>
-            <a href="{{ route('users.trashed') }}" type="button" class="btn btn-primary btn-sm">Trashed Users</a>
+            {{ __('Trashed Users') }} &nbsp; <a href="{{ route('users') }}" type="button" class="btn btn-primary btn-sm"><< Back to users </a>
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+              @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+              @endif
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
@@ -31,11 +33,16 @@
                       <td>{{ $user->email }}</td>
                       <td>{{ $user->updated_at }}</td>
                       <td>
-                        <a href="{{ route('user.edit', $user->id) }}" type="button" class="btn btn-primary btn-sm">Edit</a>&nbsp;
-                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <form action="{{ route('user.restore', $user->id) }}" method="POST" style="display:inline;">
+                          @csrf
+                          @method('PATCH')
+                          <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                        </form>
+                        &nbsp;
+                        <form action="{{ route('user.forceDelete', $user->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
                       </td>
                     </tr>
